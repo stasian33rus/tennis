@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Game</title>
+</head>
+<body>
+    <div id="field">
+        <canvas class="scores" id="score"></canvas>
+        <canvas class="game" id="game"></canvas>
+    </div>
+<style>
+
+    #field{
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: baseline;
+    }
+    .scores{
+        display: block;
+        height: 50px;
+        width: 450px;
+        border: 2px solid black
+    }
+    .game{
+        display: block;
+        height: 400px;
+        width: 450px;
+        background-color: azure;
+        border: 2px solid black
+    }
+    
+    
+</style>
+
+
+<script>
+    var playername=prompt("Insert your Name")
+    var score= document.getElementById("score")
+    var context = document.getElementById("game")
+        ctx = context.getContext("2d")
+    var player = {
+        width:30,
+        height:2,
+        x:135,
+        y1:145,
+        y2:5,
+        color1:"red",
+        color2:"blue",
+        life:1,
+    }
+
+    var ball = {
+        width:4,
+        height:2,
+        y:143,
+        color:"black",
+    }
+    var speed = 0.4;
+    var speedx= 0.4;
+    var scorespeed=0,
+    scorescore=0
+    var vect = undefined
+    var scores=document.getElementById("score");
+    scor=scores.getContext("2d")
+    var tester= undefined
+    var stop = undefined
+
+    document.onkeydown = function (e){
+        if (e.keyCode) {
+            tester=true
+            return scorespeed=1 
+        }
+    }
+    
+    context.onmousemove = function(event){
+        if (player.x > 0 && player.x  < context.width) {
+            player.x = (event.offsetX-15)*(193/context.width); 
+        } else {player.x = 1}
+    }
+
+
+
+    function render(){ 
+        
+        scor.clearRect(0,0,500,500)
+        scor.beginPath()
+        scor.fillStyle = "black"
+        scor.font = "50pt arial"
+        scor.fillText("Speed: "+Math.floor(scorespeed),10,65,70);
+        scor.fillText("Score: "+scorescore,220,65,70);
+        
+        scor.beginPath()
+        scor.fillStyle = "red"
+        scor.font = "60pt arial"
+        scor.fillText("Welcome",110,65,80)
+        scor.beginPath()
+        scor.fillStyle = "red"
+        scor.font = "40pt arial"
+        scor.fillText(playername,125,120,55)
+
+        ctx.clearRect(0, 0, 1000, 1000);
+        ctx.beginPath()
+        ctx.strokeStyle="black"
+        ctx.strokeRect(0,0,150,150)
+        ctx.strokeRect(150, 0, 300,150);
+        ctx.strokeRect(0,0,300,150)
+        
+        ctx.beginPath()
+        ctx.fillStyle="red"
+        ctx.arc(150, 75, 5, 0, Math.PI*2);
+        ctx.fill()
+        
+        ctx.beginPath()
+        ctx.fillStyle=player.color1;
+        ctx.fillRect(player.x,player.y1,player.width,player.height);
+        ctx.beginPath()
+        ctx.fillStyle=player.color2
+        ctx.fillRect(player.x,player.y2,player.width,player.height);
+        
+
+        if (tester != true) {
+            ball.x=player.x+13
+        } if (tester) {
+            if (ball.x+5<300 && ball.x>0){
+                ball.x+=speedx
+                } if (ball.x+5>=300){
+                    ball.x= ball.x-speedx
+                    speedx*=-1
+                } if (ball.x<=0) {
+                    ball.x= ball.x + speedx+0.8
+                    speedx*=-1
+                }
+            if  (vect != true) {
+                if (ball.y > player.y2+2) {
+                    ball.y -= speed;
+                } if (ball.y <= player.y2+2 && ball.x > player.x && ball.x < player.x+player.width) {
+                    vect = true
+                    speed += 0.03
+                    speedx += 0.03
+                    scorespeed += 0.4 
+                    scorescore += 1
+                } if (ball.y <= player.y2+3 && ball.x < player.x ||ball.y <= player.y2+3 && ball.x > player.x+player.width){
+                    ball.y -= 1
+                }
+            } if (vect) {
+                if (ball.y < player.y1-2) {
+                    ball.y += speed;
+                } if (ball.y >= player.y1-2 && ball.x > player.x && ball.x < player.x + player.width) {
+                    vect = undefined
+                    speed += 0.03
+                    speedx += 0.03
+                    scorespeed += 0.4
+                    scorescore += 1
+                } if (ball.y >= player.y1-2 && ball.x < player.x || ball.y >= player.y1-2 && ball.x > player.x){
+                    ball.y += 1
+                }
+            }
+        }
+
+
+if (ball.y < 0 || ball.y > player.y1+10) {
+    window.location.reload(alert("You lose. Press 'OK' to restart the game"))
+    return ball.y = 143
+} 
+
+
+        ctx.beginPath()
+        ctx.fillStyle=ball.color
+        ctx.fillRect(ball.x,ball.y,ball.width,ball.height)
+    }
+    if (stop!=true){
+        setInterval(render,5)
+    }
+    window.addEventListener("load",function(){
+        render()
+    })
+
+</script>
+
+</body>
+</html>
